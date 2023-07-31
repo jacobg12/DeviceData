@@ -10,7 +10,7 @@ namespace DeviceData.Entities
         public IList<IDevice> Devices { get; set; }
     }
 
-    public class IDevice
+    public interface IDevice
     {
         public int DeviceID { get; set; }
         public string Name { get; set; }
@@ -18,7 +18,7 @@ namespace DeviceData.Entities
         public IList<ISensordata> SensorData { get; set; }
     }
 
-    public class ISensordata
+    public interface ISensordata
     {
         public string SensorType { get; set; }
         public string DateTime { get; set; }

@@ -10,7 +10,7 @@ namespace DeviceData.Entities
         public IList<ITracker> Trackers { get; set; }
     }
 
-    public class ITracker
+    public interface ITracker
     {
         public int Id { get; set; }
         public string Model { get; set; }
@@ -18,14 +18,14 @@ namespace DeviceData.Entities
         public IList<ISensor> Sensors { get; set; }
     }
 
-    public class ISensor
+    public interface ISensor
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public IList<ICrumb> Crumbs { get; set; }
     }
 
-    public class ICrumb
+    public interface ICrumb
     {
         public string CreatedDtm { get; set; }
         public float Value { get; set; }
