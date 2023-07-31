@@ -23,7 +23,7 @@ namespace DeviceData.Factory
             SummerizeDevice1(deviceData1);
             SummerizeDevice2(deviceData2);
 
-            System.IO.File.WriteAllText("MergedList.json", JsonConvert.SerializeObject(_generalDeviceData ,Formatting.Indented));
+            System.IO.File.WriteAllText("MergedList.json", JsonConvert.SerializeObject(_generalDeviceData, Formatting.Indented));
         }
 
         public void SummerizeDevice1(IDeviceData1 data)
@@ -37,12 +37,12 @@ namespace DeviceData.Factory
                 {
                     generalDeviceData.DeviceId = tracker.Id;
                     generalDeviceData.DeviceName = tracker.Model;
-                 
+
                     var sorted = sensor.Crumbs.Select(x => x.CreatedDtm).OrderBy(y => DateTime.Parse(y));
-                    
+
                     if (sorted.Count() > 0)
                     {
-                        var first = DateTime.Parse(sorted.First()); 
+                        var first = DateTime.Parse(sorted.First());
                         var last = DateTime.Parse(sorted.Last());
                         if (generalDeviceData.FirstReadingDtm == null || generalDeviceData.FirstReadingDtm > first)
                             generalDeviceData.FirstReadingDtm = first;
@@ -92,45 +92,23 @@ namespace DeviceData.Factory
             }
         }
 
-
-        public DateTime GetLastReportedDate()
+        public void PrintSummary()
         {
-            throw new NotImplementedException();
-        }
+            foreach (var analytic in _generalDeviceData)
+            {
 
-        public double GetAverageTemperature()
-        {
-            throw new NotImplementedException();
-        }
-
-        public long GetTotalRecordCount()
-        {
-            throw new NotImplementedException();
-        }
-
-        public double GetAverageHumidity()
-        {
-            throw new NotImplementedException();
-        }
-
-        DateTime IDeviceHub.GetLastReportedDate()
-        {
-            throw new NotImplementedException();
-        }
-
-        double IDeviceHub.GetAverageTemperature()
-        {
-            throw new NotImplementedException();
-        }
-
-        long IDeviceHub.GetTotalRecordCount()
-        {
-            throw new NotImplementedException();
-        }
-
-        double IDeviceHub.GetAverageHumidity()
-        {
-            throw new NotImplementedException();
+                Console.WriteLine(string.Format("Company Id:{0}", analytic.CompanyId));
+                Console.WriteLine(string.Format("Company Name:{0}", analytic.CompanyName));
+                Console.WriteLine(string.Format("Device Id:{0}", analytic.DeviceId));
+                Console.WriteLine(string.Format("Device Name:{0}", analytic.DeviceName));
+                Console.WriteLine(string.Format("First Reading:{0}", analytic.FirstReadingDtm));
+                Console.WriteLine(string.Format("Last Reading:{0}", analytic.LastReadingDtm));
+                Console.WriteLine(string.Format("Temperature Count:{0}", analytic.TemperatureCount));
+                Console.WriteLine(string.Format("Average Temperature:{0}", analytic.AverageTemperature));
+                Console.WriteLine(string.Format("Humidity Count:{0}", analytic.HumidityCount));
+                Console.WriteLine(string.Format("Average Humidity:{0}", analytic.AverageHumdity));
+                Console.WriteLine("-----------------------------------------------------------");
+            }
         }
 
     }

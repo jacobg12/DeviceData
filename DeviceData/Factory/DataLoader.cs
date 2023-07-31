@@ -9,10 +9,10 @@ namespace DeviceData.Factory
     internal class DataLoader : IDataLoader
     {
 
-        public IDeviceData1 GetDeviceData1()
+        public IDeviceData1 GetDeviceData1(string path = "DeviceData.Resources.DeviceDataFoo1.json")
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "DeviceData.Resources.DeviceDataFoo1.json";
+            var resourceName = path;
 
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream))
@@ -24,10 +24,10 @@ namespace DeviceData.Factory
             }
         }
 
-        public IDeviceData2 GetDeviceData2()
+        public IDeviceData2 GetDeviceData2(string path = "DeviceData.Resources.DeviceDataFoo2.json")
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "DeviceData.Resources.DeviceDataFoo2.json";
+            var resourceName = path;
 
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream))
