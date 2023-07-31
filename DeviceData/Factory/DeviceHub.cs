@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 
 namespace DeviceData.Factory
 {
@@ -22,7 +23,7 @@ namespace DeviceData.Factory
             SummerizeDevice1(deviceData1);
             SummerizeDevice2(deviceData2);
 
-            System.IO.File.WriteAllText("MergedList.json", JsonConvert.SerializeObject(_generalDeviceData));
+            System.IO.File.WriteAllText("MergedList.json", JsonConvert.SerializeObject(_generalDeviceData ,Formatting.Indented));
         }
 
         public void SummerizeDevice1(IDeviceData1 data)
