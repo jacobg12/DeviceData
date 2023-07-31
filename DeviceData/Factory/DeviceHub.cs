@@ -1,5 +1,6 @@
 ﻿using DeviceData.Entities;
 using DeviceData.Interfaces;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,8 @@ namespace DeviceData.Factory
             deviceData2 = data2;
             SummerizeDevice1(deviceData1);
             SummerizeDevice2(deviceData2);
+
+            System.IO.File.WriteAllText("MergedList.json", JsonConvert.SerializeObject(_generalDeviceData));
         }
 
         public void SummerizeDevice1(IDeviceData1 data)

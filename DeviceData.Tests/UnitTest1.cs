@@ -4,6 +4,7 @@ using DeviceData.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 using NUnit.Framework;
 using System;
+using System.Linq;
 
 namespace DeviceData.Tests
 {
@@ -13,7 +14,7 @@ namespace DeviceData.Tests
         private IDeviceData2 _deviceData2;
         private IDeviceHub _deviceHub;
 
-        private void GeneratePredictableDeviceData1()
+        private void GeneratePredictableDeviceData1(float seed)
         {
             _deviceData1 = new DeviceData1();
             _deviceData1.PartnerId = 1;
@@ -39,7 +40,7 @@ namespace DeviceData.Tests
                         var crumb = new Crumb();
 
                         crumb.CreatedDtm = DateTime.Parse(tracker.ShipmentStartDtm).AddMinutes(p * j).ToString();
-                        crumb.Value = float.Parse(((p * j) * 0.259).ToString());
+                        crumb.Value = float.Parse(((p * j) * seed).ToString());
 
                         sensor.Crumbs.Add(crumb);
                     }
@@ -59,7 +60,7 @@ namespace DeviceData.Tests
                         var crumb = new Crumb();
 
                         crumb.CreatedDtm = DateTime.Parse(tracker.ShipmentStartDtm).AddMinutes(p * j).ToString();
-                        crumb.Value = float.Parse(((p * j) * 0.259).ToString());
+                        crumb.Value = float.Parse(((p * j) * seed).ToString());
 
                         sensor.Crumbs.Add(crumb);
                     }
@@ -69,7 +70,7 @@ namespace DeviceData.Tests
                 _deviceData1.Trackers.Add(tracker);
             }
         }
-        private void GeneratePredictableDeviceData2()
+        private void GeneratePredictableDeviceData2(float seed)
         {
             _deviceData2 = new DeviceData2();
 
@@ -90,7 +91,7 @@ namespace DeviceData.Tests
 
                     data.SensorType = "TEMP";
                     data.DateTime = DateTime.Parse(device.StartDateTime).AddMinutes(j).ToString();
-                    data.Value = float.Parse(((i * j) * 0.1898).ToString());
+                    data.Value = float.Parse(((i * j) * seed).ToString());
 
                     device.SensorData.Add(data);
                 }
@@ -101,7 +102,7 @@ namespace DeviceData.Tests
 
                     data.SensorType = "HUM";
                     data.DateTime = DateTime.Parse(device.StartDateTime).AddMinutes(j).ToString();
-                    data.Value = float.Parse(((i * j) * 0.1098).ToString());
+                    data.Value = float.Parse(((i * j) * seed+seed).ToString());
 
                     device.SensorData.Add(data);
                 }
@@ -113,19 +114,24 @@ namespace DeviceData.Tests
         [SetUp]
         public void Setup()
         {
-            GeneratePredictableDeviceData1();
-            GeneratePredictableDeviceData2();
+        }
+
+        [TestCase(0)]
+        [TestCase(0)]
+        public void DoesReturnCorrectAmountForDevices(double seed)
+        {
+            GeneratePredictableDeviceData1(float.Parse(seed.ToString()));
+            GeneratePredictableDeviceData2(float.Parse(seed.ToString()));
 
             _deviceHub = new DeviceHub(_deviceData1, _deviceData2);
 
+            var items = _deviceHub._generalDeviceData.Where(x => x.CompanyId == 1).Select(y => y);
 
 
-        }
+            Assert.AreEqual(items.Count(), 3);
+           
 
-        [TestCase()]
-        [TestCase()]
-        public void Test1()
-        {
+
             Assert.Pass();
         }
     }
