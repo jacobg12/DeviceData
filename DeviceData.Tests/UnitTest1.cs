@@ -130,10 +130,17 @@ namespace DeviceData.Tests
 
 
             Assert.AreEqual(items.Count(), totalNumber);
+
             Assert.AreEqual(items.Where(y=>y.CompanyId == 1).Count(), eachNumber);
+            Assert.AreEqual(items.Where(y=>y.CompanyId == 1).Select(x=>x.TemperatureCount).Count(), eachNumber);
+            Assert.AreEqual(items.Where(y=>y.CompanyId == 1).Select(x => x.HumidityCount).Count(), eachNumber);
+
+            Assert.AreEqual(items.Where(y=>y.CompanyId == 2).Count(), eachNumber);
+            Assert.AreEqual(items.Where(y=>y.CompanyId == 2).Select(x => x.HumidityCount).Count(), eachNumber);
             Assert.AreEqual(items.Where(y=>y.CompanyId == 2).Count(), eachNumber);
         }
 
+        #region Device1
         [TestCase(0.897,0, 111.22d)]
         [TestCase(0.897,1, 435.22d)]
         [TestCase(0.897,2, 759.22d)]
@@ -163,5 +170,71 @@ namespace DeviceData.Tests
 
             Assert.AreEqual(items.ElementAt(index).AverageHumdity, value);
         }
+        #endregion Device1
+
+        #region Device2
+        [TestCase(0.897, 0, 5.382d)]
+        [TestCase(0.897, 1, 8.073d)]
+        [TestCase(0.897, 2, 10.764d)]
+        public void DoesCalulateCorrectTemperatureDevice2(double seed, int index, double value)
+        {
+            GeneratePredictableDeviceData1(float.Parse(seed.ToString()));
+            GeneratePredictableDeviceData2(float.Parse(seed.ToString()));
+
+            _deviceHub = new DeviceHub(_deviceData1, _deviceData2);
+
+            var items = _deviceHub._generalDeviceData.Select(y => y).Where(y => y.CompanyId == 2);
+
+            Assert.AreEqual(items.ElementAt(index).AverageTemperature, value);
+        }
+
+        [TestCase(0.897, 0, 6.279d)]
+        [TestCase(0.897, 1, 8.97d)]
+        [TestCase(0.897, 2, 11.661d)]
+        public void DoesCalulateCorrectHumidityDevice2(double seed, int index, double value)
+        {
+            GeneratePredictableDeviceData1(float.Parse(seed.ToString()));
+            GeneratePredictableDeviceData2(float.Parse(seed.ToString()));
+
+            _deviceHub = new DeviceHub(_deviceData1, _deviceData2);
+
+            var items = _deviceHub._generalDeviceData.Select(y => y).Where(y => y.CompanyId == 2);
+
+            Assert.AreEqual(items.ElementAt(index).AverageHumdity, value);
+        }
+
+        [TestCase(0,0, "1/1/2023 12:04:00 AM")]
+        [TestCase(0,1, "1/1/2023 12:05:00 AM")]
+        [TestCase(0,2, "1/1/2023 12:06:00 AM")]
+        public void DoesCalulateCorrectFirstReadDevice2(double seed,int index, string datetime)
+        {
+            GeneratePredictableDeviceData1(float.Parse(seed.ToString()));
+            GeneratePredictableDeviceData2(float.Parse(seed.ToString()));
+
+            _deviceHub = new DeviceHub(_deviceData1, _deviceData2);
+
+            var items = _deviceHub._generalDeviceData.Select(y => y).Where(y => y.CompanyId == 2);
+
+
+
+            Assert.AreEqual(items.ElementAt(index).FirstReadingDtm, DateTime.Parse(datetime)) ;
+        }
+
+
+        [TestCase(0, 0, "1/1/2023 12:06:00 AM")]
+        [TestCase(0, 1, "1/1/2023 12:07:00 AM")]
+        [TestCase(0, 2, "1/1/2023 12:08:00 AM")]
+        public void DoesCalulateCorrectLastReadDevice2(double seed, int index, string datetime)
+        {
+            GeneratePredictableDeviceData1(float.Parse(seed.ToString()));
+            GeneratePredictableDeviceData2(float.Parse(seed.ToString()));
+
+            _deviceHub = new DeviceHub(_deviceData1, _deviceData2);
+
+            var items = _deviceHub._generalDeviceData.Select(y => y).Where(y => y.CompanyId == 2);
+
+            Assert.AreEqual(items.ElementAt(index).LastReadingDtm, DateTime.Parse(datetime));
+        }
+        #endregion Device2
     }
 }
