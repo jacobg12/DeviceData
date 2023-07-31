@@ -20,6 +20,7 @@ namespace DeviceData.Tests
             _deviceData1.PartnerId = 1;
             _deviceData1.PartnerName = "TestCase1";
 
+            float tempIncrementConst = 0.29f;
             //Add Trackers
             for (int i = 2; i < 5; i++)
             {
@@ -31,6 +32,7 @@ namespace DeviceData.Tests
                 //Add Temp Sensors
                 for (int j = 2; j < 5; j++)
                 {
+
                     var sensor = new Sensor();
                     sensor.Id = ++sensorStart;
                     sensor.Name = "Temperature";
@@ -40,7 +42,7 @@ namespace DeviceData.Tests
                         var crumb = new Crumb();
 
                         crumb.CreatedDtm = DateTime.Parse(tracker.ShipmentStartDtm).AddMinutes(p * j).ToString();
-                        crumb.Value = float.Parse(((p * j) * seed).ToString());
+                        crumb.Value = float.Parse(((p * j * ++tempIncrementConst) * (seed+seed)/seed).ToString());
 
                         sensor.Crumbs.Add(crumb);
                     }
@@ -60,7 +62,7 @@ namespace DeviceData.Tests
                         var crumb = new Crumb();
 
                         crumb.CreatedDtm = DateTime.Parse(tracker.ShipmentStartDtm).AddMinutes(p * j).ToString();
-                        crumb.Value = float.Parse(((p * j) * seed).ToString());
+                        crumb.Value = float.Parse(((p * j* ++tempIncrementConst) * (seed*seed)).ToString());
 
                         sensor.Crumbs.Add(crumb);
                     }
@@ -116,23 +118,50 @@ namespace DeviceData.Tests
         {
         }
 
-        [TestCase(0)]
-        [TestCase(0)]
-        public void DoesReturnCorrectAmountForDevices(double seed)
+        [TestCase(0,6,3)]
+        public void DoesReturnCorrectAmountForDevices(double seed,int totalNumber,int eachNumber)
         {
             GeneratePredictableDeviceData1(float.Parse(seed.ToString()));
             GeneratePredictableDeviceData2(float.Parse(seed.ToString()));
 
             _deviceHub = new DeviceHub(_deviceData1, _deviceData2);
 
-            var items = _deviceHub._generalDeviceData.Where(x => x.CompanyId == 1).Select(y => y);
+            var items = _deviceHub._generalDeviceData.Select(y => y);
 
 
-            Assert.AreEqual(items.Count(), 3);
-           
+            Assert.AreEqual(items.Count(), totalNumber);
+            Assert.AreEqual(items.Where(y=>y.CompanyId == 1).Count(), eachNumber);
+            Assert.AreEqual(items.Where(y=>y.CompanyId == 2).Count(), eachNumber);
+        }
 
+        [TestCase(0.897,0, 111.22d)]
+        [TestCase(0.897,1, 435.22d)]
+        [TestCase(0.897,2, 759.22d)]
+        public void DoesCalulateCorrectTemperatureDevice1(double seed,int index,double value )
+        {
+            GeneratePredictableDeviceData1(float.Parse(seed.ToString()));
+            GeneratePredictableDeviceData2(float.Parse(seed.ToString()));
 
-            Assert.Pass();
+            _deviceHub = new DeviceHub(_deviceData1, _deviceData2);
+
+            var items = _deviceHub._generalDeviceData.Select(y => y).Where(y=>y.CompanyId == 1);
+
+            Assert.AreEqual(items.ElementAt(index).AverageTemperature, value);
+        }
+
+        [TestCase(0.354, 0, 17.119d)]
+        [TestCase(0.354, 1, 37.421d)]
+        [TestCase(0.354, 2, 57.722d)]
+        public void DoesCalulateCorrectHumidityDevice1(double seed, int index, double value)
+        {
+            GeneratePredictableDeviceData1(float.Parse(seed.ToString()));
+            GeneratePredictableDeviceData2(float.Parse(seed.ToString()));
+
+            _deviceHub = new DeviceHub(_deviceData1, _deviceData2);
+
+            var items = _deviceHub._generalDeviceData.Select(y => y).Where(y => y.CompanyId == 1);
+
+            Assert.AreEqual(items.ElementAt(index).AverageHumdity, value);
         }
     }
 }

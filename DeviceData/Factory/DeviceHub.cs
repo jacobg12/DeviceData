@@ -46,8 +46,12 @@ namespace DeviceData.Factory
                 }
                 generalDeviceData.TemperatureCount = tracker.Sensors.Where(name => name.Name.ToLower() == "temperature").Count();
                 generalDeviceData.HumidityCount = tracker.Sensors.Where(name => name.Name.ToLower() == "humidty").Count();
-                generalDeviceData.AverageTemperature = tracker.Sensors.Where(name => name.Name.ToLower() == "temperature").Select(crumbs => crumbs.Crumbs).SelectMany(crumb => crumb).Select(value => value.Value).Average();
-                generalDeviceData.AverageHumdity = tracker.Sensors.Where(name => name.Name.ToLower() == "humidty").Select(crumbs => crumbs.Crumbs).SelectMany(crumb => crumb).Select(value => value.Value).Average();
+                generalDeviceData.AverageTemperature = Math.Round(tracker.Sensors.Where(name => name.Name.ToLower() == "temperature")
+                    .Select(crumbs => crumbs.Crumbs).SelectMany(crumb => crumb).Select(value => value.Value)
+                    .Average(), 3);
+                generalDeviceData.AverageHumdity = Math.Round(tracker.Sensors.Where(name => name.Name.ToLower() == "humidty")
+                    .Select(crumbs => crumbs.Crumbs).SelectMany(crumb => crumb).Select(value => value.Value)
+                    .Average(), 3);
 
                 _generalDeviceData.Add(generalDeviceData);
             }
@@ -72,12 +76,12 @@ namespace DeviceData.Factory
                 generalDeviceData.TemperatureCount = device.SensorData.Where(name => name.SensorType.ToLower() == "temp").Count();
                 generalDeviceData.HumidityCount = device.SensorData.Where(name => name.SensorType.ToLower() == "hum").Count();
 
-                generalDeviceData.AverageTemperature = device.SensorData.Where(name => name.SensorType.ToLower() == "temp")
+                generalDeviceData.AverageTemperature = Math.Round(device.SensorData.Where(name => name.SensorType.ToLower() == "temp")
                     .Select(sensordata => sensordata)
-                    .Select(value => value.Value).Average();
-                generalDeviceData.AverageHumdity = device.SensorData.Where(name => name.SensorType.ToLower() == "hum")
+                    .Select(value => value.Value).Average(), 3);
+                generalDeviceData.AverageHumdity = Math.Round(device.SensorData.Where(name => name.SensorType.ToLower() == "hum")
                     .Select(sensordata => sensordata)
-                    .Select(value => value.Value).Average();
+                    .Select(value => value.Value).Average(), 3);
                 _generalDeviceData.Add(generalDeviceData);
             }
         }
