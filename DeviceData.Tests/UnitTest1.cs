@@ -2,6 +2,7 @@ using DeviceData.Entities;
 using DeviceData.Factory;
 using DeviceData.Interfaces;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -22,6 +23,7 @@ namespace DeviceData.Tests
 
             float tempIncrementConst = 0.29f;
             //Add Trackers
+            int addMinutes = 2;
             for (int i = 2; i < 5; i++)
             {
                 var tracker = new Tracker();
@@ -29,6 +31,7 @@ namespace DeviceData.Tests
                 tracker.Model = string.Format("ModelTest-{0}", i);
                 tracker.ShipmentStartDtm = new DateTime(2023, 1, 1).ToString();
                 int sensorStart = 0;
+                
                 //Add Temp Sensors
                 for (int j = 2; j < 5; j++)
                 {
@@ -41,7 +44,7 @@ namespace DeviceData.Tests
                     {
                         var crumb = new Crumb();
 
-                        crumb.CreatedDtm = DateTime.Parse(tracker.ShipmentStartDtm).AddMinutes(p * j).ToString();
+                        crumb.CreatedDtm = DateTime.Parse(tracker.ShipmentStartDtm).AddMinutes(++addMinutes).ToString();
                         crumb.Value = float.Parse(((p * j * ++tempIncrementConst) * (seed+seed)/seed).ToString());
 
                         sensor.Crumbs.Add(crumb);
@@ -61,7 +64,7 @@ namespace DeviceData.Tests
                     {
                         var crumb = new Crumb();
 
-                        crumb.CreatedDtm = DateTime.Parse(tracker.ShipmentStartDtm).AddMinutes(p * j).ToString();
+                        crumb.CreatedDtm = DateTime.Parse(tracker.ShipmentStartDtm).AddMinutes(++addMinutes).ToString();
                         crumb.Value = float.Parse(((p * j* ++tempIncrementConst) * (seed*seed)).ToString());
 
                         sensor.Crumbs.Add(crumb);
@@ -169,6 +172,44 @@ namespace DeviceData.Tests
             var items = _deviceHub._generalDeviceData.Select(y => y).Where(y => y.CompanyId == 1);
 
             Assert.AreEqual(items.ElementAt(index).AverageHumdity, value);
+        }
+
+        [TestCase(0, 0, "1/1/2023 12:03:00 AM")]
+        [TestCase(0, 1, "1/1/2023 12:21:00 AM")]
+        [TestCase(0, 2, "1/1/2023 12:39:00 AM")]
+        public void DoesCalulateCorrectFirstReadDevice1(double seed, int index, string datetime)
+        {
+            GeneratePredictableDeviceData1(float.Parse(seed.ToString()));
+            GeneratePredictableDeviceData2(float.Parse(seed.ToString()));
+
+            _deviceHub = new DeviceHub(_deviceData1, _deviceData2);
+
+            var items = _deviceHub._generalDeviceData.Select(y => y).Where(y => y.CompanyId == 1);
+
+
+            Assert.AreEqual(items.ElementAt(index).FirstReadingDtm, DateTime.Parse(datetime));
+        }
+
+
+        [TestCase(0, 0, "1/1/2023 12:20:00 AM")]
+        [TestCase(0, 1, "1/1/2023 12:38:00 AM")]
+        [TestCase(0, 2, "1/1/2023 12:56:00 AM")]
+        public void DoesCalulateCorrectLastReadDevice1(double seed, int index, string datetime)
+        {
+            GeneratePredictableDeviceData1(float.Parse(seed.ToString()));
+            GeneratePredictableDeviceData2(float.Parse(seed.ToString()));
+
+            _deviceHub = new DeviceHub(_deviceData1, _deviceData2);
+
+            var items = _deviceHub._generalDeviceData.Select(y => y).Where(y => y.CompanyId == 1);
+
+
+            var str = items.ElementAt(0).LastReadingDtm.ToString();
+            str = items.ElementAt(1).LastReadingDtm.ToString();
+            str = items.ElementAt(2).LastReadingDtm.ToString();
+
+
+            Assert.AreEqual(items.ElementAt(index).LastReadingDtm, DateTime.Parse(datetime));
         }
         #endregion Device1
 

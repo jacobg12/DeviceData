@@ -37,11 +37,17 @@ namespace DeviceData.Factory
                 {
                     generalDeviceData.DeviceId = tracker.Id;
                     generalDeviceData.DeviceName = tracker.Model;
+                 
                     var sorted = sensor.Crumbs.Select(x => x.CreatedDtm).OrderBy(y => DateTime.Parse(y));
+                    
                     if (sorted.Count() > 0)
                     {
-                        generalDeviceData.FirstReadingDtm = DateTime.Parse(sorted.First());
-                        generalDeviceData.LastReadingDtm = DateTime.Parse(sorted.Last());
+                        var first = DateTime.Parse(sorted.First()); 
+                        var last = DateTime.Parse(sorted.Last());
+                        if (generalDeviceData.FirstReadingDtm == null || generalDeviceData.FirstReadingDtm > first)
+                            generalDeviceData.FirstReadingDtm = first;
+                        if (generalDeviceData.LastReadingDtm == null || generalDeviceData.LastReadingDtm < last)
+                            generalDeviceData.LastReadingDtm = last;
                     }
                 }
                 generalDeviceData.TemperatureCount = tracker.Sensors.Where(name => name.Name.ToLower() == "temperature").Count();
