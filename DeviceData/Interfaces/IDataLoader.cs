@@ -9,7 +9,7 @@ namespace DeviceData.Interfaces
 {
     public interface IDataLoader
     {
-        public DeviceData1 GetDeviceData1();
-        public DeviceData2 GetDeviceData2();
+        public IDeviceData1 GetDeviceData1();
+        public IDeviceData2 GetDeviceData2();
     }
 }

@@ -14,7 +14,7 @@ namespace DeviceData.Factory
     internal class DataLoader : IDataLoader
     {
 
-        public DeviceData1 GetDeviceData1()
+        public IDeviceData1 GetDeviceData1()
         {
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = "DeviceData.Resources.DeviceDataFoo1.json";
@@ -29,7 +29,7 @@ namespace DeviceData.Factory
             }
         }
 
-        public DeviceData2 GetDeviceData2()
+        public IDeviceData2 GetDeviceData2()
         {
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = "DeviceData.Resources.DeviceDataFoo2.json";

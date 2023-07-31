@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace DeviceData.Entities
 {
 
-    public class IDeviceData1
+    public interface IDeviceData1 
     {
         public int PartnerId { get; set; }
         public string PartnerName { get; set; }
@@ -26,7 +26,7 @@ namespace DeviceData.Entities
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public IList<Crumb> Crumbs { get; set; }
+        public IList<ICrumb> Crumbs { get; set; }
     }
 
     public class ICrumb
