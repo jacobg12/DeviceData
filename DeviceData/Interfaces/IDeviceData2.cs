@@ -7,7 +7,7 @@ namespace DeviceData.Entities
     {
         public int CompanyId { get; set; }
         public string Company { get; set; }
-        public IList<IDevice> Devices { get; set; }
+        public IList<Device> Devices { get; set; }
     }
 
     public interface IDevice
@@ -15,7 +15,7 @@ namespace DeviceData.Entities
         public int DeviceID { get; set; }
         public string Name { get; set; }
         public string StartDateTime { get; set; }
-        public IList<ISensordata> SensorData { get; set; }
+        public IList<Sensordata> SensorData { get; set; }
     }
 
     public interface ISensordata

@@ -7,7 +7,7 @@ namespace DeviceData.Entities
     {
         public int PartnerId { get; set; } 
         public string PartnerName { get; set; } = string.Empty;
-        public IList<ITracker> Trackers { get; set; } = new List<ITracker>();
+        public IList<Tracker> Trackers { get; set; } = new List<Tracker>();
     }
 
     public class Tracker : ITracker
@@ -15,14 +15,14 @@ namespace DeviceData.Entities
         public int Id { get; set; }
         public string Model { get; set; } = string.Empty;
         public string ShipmentStartDtm { get; set; } = string.Empty;
-        public IList<ISensor> Sensors { get; set; } = new List<ISensor>();
+        public IList<Sensor> Sensors { get; set; } = new List<Sensor>();
     }
 
     public class Sensor : ISensor
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public IList<ICrumb> Crumbs { get; set; } = new List<ICrumb>();
+        public IList<Crumb> Crumbs { get; set; } = new List<Crumb>();
     }
 
     public class Crumb : ICrumb
